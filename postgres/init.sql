@@ -25,3 +25,7 @@ CREATE TABLE cart (
     product_id INTEGER REFERENCES products(id),
     quantity INTEGER
 );
+
+-- Insert sample data into users and products tables
+INSERT INTO users (name, email) VALUES ('John Doe', 'john.doe@example.com');
+INSERT INTO products (name, description, price) VALUES ('Product A', 'Description of Product A', 24.99);

@@ -11,14 +11,9 @@ func main() {
     r.HandleFunc("/health", HealthCheckHandler).Methods("GET")
     r.HandleFunc("/products", CreateProductHandler).Methods("POST")
     r.HandleFunc("/products/{id}", GetProductHandler).Methods("GET")
-    r.HandleFunc("/products", GetAllProductsHandler).Methods("GET")
-    r.HandleFunc("/products/{id}", UpdateProductHandler).Methods("PUT")
-    r.HandleFunc("/products/{id}", DeleteProductHandler).Methods("DELETE")
+    r.HandleFunc("/products", GetProductsHandler).Methods("GET")
 
-    initDB()
-    defer db.Close()
-
-    log.Println("Starting server on :8002")
+    log.Println("Starting Product service on :8002")
     if err := http.ListenAndServe(":8002", r); err != nil {
         log.Fatalf("could not start server: %s\n", err)
     }
