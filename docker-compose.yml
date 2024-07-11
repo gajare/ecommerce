@@ -69,3 +69,10 @@ services:
     depends_on:
       - postgres
       - kafka
+
+  inventory-service:
+    build: ./inventory
+    ports:
+      - "8005:8005"
+    depends_on:
+      - kafka

@@ -9,12 +9,15 @@ import (
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/segmentio/kafka-go"
 )
 
 var db *sql.DB
+var kafkaWriter *kafka.Writer
 
 func init() {
 	initDB()
+	initKafka()
 }
 
 func initDB() {
@@ -23,6 +26,14 @@ func initDB() {
 	db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func initKafka() {
+	kafkaWriter = &kafka.Writer{
+		Addr:     kafka.TCP("kafka:9092"),
+		Topic:    "purchase-events",
+		Balancer: &kafka.LeastBytes{},
 	}
 }
 
@@ -39,6 +50,23 @@ func CreatePurchaseHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	purchase.ID = id
+
+	// Produce Kafka message
+	msg, err := json.Marshal(purchase)
+	if err != nil {
+		log.Println("Error marshaling purchase:", err)
+		return
+	}
+
+	kafkaMessage := kafka.Message{
+		Value: msg,
+	}
+
+	err = kafkaWriter.WriteMessages(r.Context(), kafkaMessage)
+	if err != nil {
+		log.Println("Error writing Kafka message:", err)
+	}
+
 	json.NewEncoder(w).Encode(purchase)
 }
 
