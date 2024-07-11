@@ -21,7 +21,7 @@ Follow these steps to start the e-commerce platform:
 docker-compose up --build
 
 
-###User Service
+## User Service
 Create User:
 
 Method: POST
@@ -31,12 +31,12 @@ URL: http://localhost:8001/users
   "email": "john.doe@example.com"
 }
 
-##Get Users:
+## Get Users:
 
 Method: GET
 URL: http://localhost:8001/users
 
-###Create Product:
+### Create Product:
 
 Method: POST
 URL: http://localhost:8002/products
@@ -46,7 +46,7 @@ URL: http://localhost:8002/products
   "price": 24.99
 }
 
-###Get Products:
+### Get Products:
 URL: http://localhost:8002/products
 
 ##Create Purchase
@@ -60,10 +60,10 @@ URL: http://localhost:8003/purchases
   "total_price": 49.99
 }
 
-###Get Purchases
+### Get Purchases
 URL: http://localhost:8003/purchases
 
-##Cart Service
+## Cart Service
 
 Method: POST
 URL: http://localhost:8004/cart
@@ -73,7 +73,7 @@ URL: http://localhost:8004/cart
   "product_id": 1,
   "quantity": 3
 }
-###Get Cart for User
+### Get Cart for User
 Method: GET
 URL: http://localhost:8004/cart/{user_id}
 
