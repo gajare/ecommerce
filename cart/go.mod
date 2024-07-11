@@ -1,4 +1,4 @@
-module user
+module cart
 
 go 1.8
 

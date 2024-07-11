@@ -1,4 +1,4 @@
-module user
+module purchase
 
 go 1.8
 

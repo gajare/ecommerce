@@ -1,11 +1,10 @@
+version: '3.9'
 services:
   postgres:
-    image:
-      postgres: 13
-      conatainer_name: postgres
-    restart: always
+    image: postgres:13
+    container_name: ecommerce_postgres
     environment:
-      POSTGRES_USER: admin
+      POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: ecommerce
     volumes:
@@ -13,54 +12,60 @@ services:
     ports:
       - "5432:5432"
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: ecommerce_zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
   kafka:
-    image: wurstmeister/kafka:latest
-    conatainer_name: kafka
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: ecommerce_kafka
     ports:
       - "9092:9092"
-    restart: always
     environment:
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: ecommerce_zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://ecommerce_kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
 
-  zookeeper:
-    image: wurstmeister/zookeeper:3.4.6
-    container_name: zookeeper
-    ports:
-      - "21811:21811"
-  
-  user_service:
+  user-service:
     build: ./user
+    container_name: ecommerce_user_service
     ports:
-      -"8001:8001"
+      - "8001:8001"
     depends_on:
       - postgres
-      -  kafka
+      - kafka
 
-  product_service:
+  product-service:
     build: ./product
+    container_name: ecommerce_product_service
     ports:
       - "8002:8002"
     depends_on:
       - postgres
       - kafka
-  
-  purchase_service:
+
+  purchase-service:
     build: ./purchase
+    container_name: ecommerce_purchase_service
     ports:
       - "8003:8003"
     depends_on:
       - postgres
       - kafka
 
-  cart_service:
+  cart-service:
     build: ./cart
+    container_name: ecommerce_cart_service
     ports:
       - "8004:8004"
     depends_on:
       - postgres
       - kafka
-
-
